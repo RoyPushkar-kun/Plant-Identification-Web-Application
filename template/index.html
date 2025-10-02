@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Plant ID</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 2rem; background: #f7f9fb; color: #111; }
+      .card { background: #fff; padding: 1.2rem; border-radius: 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.05); max-width: 700px; margin: auto; }
+      h1 { margin-top: 0; }
+      .preview { margin-top: 1rem; display:flex; gap:1rem; align-items:center; }
+      img { max-width: 250px; border-radius: 8px; }
+      .results { margin-left: 1rem; }
+      .result { margin-bottom: .5rem; padding: .4rem .6rem; border-radius: 6px; background: #f1f6ff; }
+      .confidence { font-weight: bold; }
+      .flash { color: #b71c1c; margin-bottom: 1rem; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Plant Identification</h1>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, msg in messages %}
+            <div class="flash">{{ msg }}</div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+
+      <form method="post" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*" required />
+        <button type="submit">Upload & Identify</button>
+      </form>
+
+      {% if filename %}
+        <div class="preview">
+          <div><img src="{{ url_for('static', filename='uploads/' + filename) }}" alt="uploaded" /></div>
+          <div class="results">
+            <h3>Top predictions</h3>
+            {% for r in results %}
+              <div class="result">
+                {{ loop.index }}. {{ r.label }} — <span class="confidence">{{ (r.confidence * 100) | round(2) }}%</span>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </body>
+</html>
